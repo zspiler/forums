@@ -13,7 +13,10 @@ const Post = require('../../models/Post');
 
 router.get('/', async (req, res) => {
   try {
-    const forums = await Forum.find();
+    const forums = await Forum.find().sort({
+      followerCount: -1
+    });
+
     res.json(forums);
   } catch (err) {
     console.log(err.message);
@@ -40,6 +43,25 @@ router.get('/:forumId', async (req, res) => {
   }
 });
 
+// @route  GET api/forums
+// @desc   Get top 5 forums by follower count
+// @access Public
+
+router.get('/top/5', async (req, res) => {
+  try {
+    const forums = await Forum.find()
+      .sort({
+        followerCount: -1
+      })
+      .limit(5);
+
+    res.json(forums);
+  } catch (err) {
+    console.log(err.message);
+    res.status(500, { msg: 'Server Error' });
+  }
+});
+
 // @route  POST api/forums
 // @desc   Create a forum
 // @access Private
@@ -52,6 +74,12 @@ router.post(
       check('name', 'Name is required')
         .not()
         .isEmpty(),
+      check(
+        'name',
+        'Forum name can not be more than 20 characters long'
+      ).isLength({
+        max: 20
+      }),
       check('description', 'Description is required')
         .not()
         .isEmpty()

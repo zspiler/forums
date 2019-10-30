@@ -20,9 +20,20 @@ router.post(
       check('title', 'Title is required')
         .not()
         .isEmpty(),
+      check('title', 'Title can not be more than 200 characters long').isLength(
+        {
+          max: 200
+        }
+      ),
       check('text', 'Text is required')
         .not()
-        .isEmpty()
+        .isEmpty(),
+      check(
+        'text',
+        'Post text can not be more than 42000 characters long'
+      ).isLength({
+        max: 42000
+      })
     ]
   ],
   async (req, res) => {
@@ -31,24 +42,31 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
+    const user = await User.findById(req.user.id).select('-password');
+
     const { title: title, text: text } = req.body;
 
     try {
+      // CHECK IF FORUM EXISTS
+      const forum = await Forum.findById(req.params.forumId);
+      if (!forum) return res.status(400).json({ msg: 'Forum not found.' });
+
       // CREATE POST
       let post = new Post({
         title: title,
         text: text,
         forum: req.params.forumId,
-        user: ObjectId(req.user.id)
+        forumName: forum.name,
+        user: ObjectId(req.user.id),
+        username: user.username
       });
+
       let postId;
       await post.save((err, post) => {
         postId = post._id;
       });
 
       // ADD POST ID TO FORUM
-      const forum = await Forum.findById(req.params.forumId);
-      if (!forum) return res.status(400).json({ msg: 'Forum not found.' });
       forum.posts.unshift({ post: postId });
       await forum.save();
 
@@ -62,6 +80,27 @@ router.post(
     }
   }
 );
+
+// @route  GET api/posts
+// @desc   Get 30 most recent posts
+// @access Public
+
+router.get('/', async (req, res) => {
+  try {
+    const posts = await Post.find()
+      .sort({
+        date: -1
+      })
+      .limit(30);
+    res.send(posts);
+  } catch (err) {
+    console.log(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'Forum not found.' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
 
 // @route  GET api/posts/forum/:forumId
 // @desc   Get all posts on a forum
@@ -153,7 +192,8 @@ router.put('/like/:postId', auth, async (req, res) => {
     if (
       post.likes.filter(like => like.user.toString() === req.user.id).length > 0
     ) {
-      return res.status(400).json({ msg: 'Post already liked' });
+      // return res.status(400).json({ msg: 'Post already liked' });
+      return res.status(400).send({ msg: 'Post already liked' });
     }
 
     post.likes.unshift({ user: req.user.id });
@@ -216,7 +256,13 @@ router.post(
     [
       check('text', 'Text is required')
         .not()
-        .isEmpty()
+        .isEmpty(),
+      check(
+        'text',
+        'Comment text can not be more than 1000 characters long'
+      ).isLength({
+        max: 1000
+      })
     ]
   ],
   async (req, res) => {
@@ -228,6 +274,7 @@ router.post(
     try {
       const user = await User.findById(req.user.id).select('-password');
       const post = await Post.findById(req.params.postId);
+      console.log(req.user.id);
 
       const newComment = {
         text: req.body.text,

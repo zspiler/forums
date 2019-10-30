@@ -18,6 +18,12 @@ router.post(
     check('username', 'Username is required')
       .not()
       .isEmpty(),
+    check(
+      'username',
+      'Username can not be more than 20 characters long'
+    ).isLength({
+      max: 20
+    }),
     check('email', 'Please enter a valid email').isEmail(),
     check('password', 'Password must be at least 6 characters long').isLength({
       min: 6
@@ -133,8 +139,12 @@ router.put('/follow/:forumId', auth, async (req, res) => {
       return res.status(400).json({ msg: 'User already follows forum' });
     }
 
+    forum.followers.unshift({ user: req.user.id });
+    forum.followerCount = forum.followerCount + 1;
+
     // Add forum to User
     user.forums.unshift({ forum: req.params.forumId });
+    await forum.save();
     await user.save();
     return res.send(user);
   } catch (err) {
@@ -166,12 +176,22 @@ router.put('/unfollow/:forumId', auth, async (req, res) => {
       return res.status(400).json({ msg: 'User does not follow forum' });
     }
 
-    // Get remove index
-    const removeIndex = user.forums
+    // Remove forum from user's forums array
+    let removeIndex = user.forums
       .map(forum => forum.forum.toString())
       .indexOf(req.params.forumId);
     user.forums.splice(removeIndex, 1);
 
+    // Remove user from forum's followers array
+    removeIndex = forum.followers
+      .map(follower => follower.user.toString())
+      .indexOf(req.user.id);
+
+    forum.followers.splice(removeIndex, 1);
+
+    forum.followerCount = forum.followerCount - 1;
+
+    await forum.save();
     await user.save();
     return res.send(user);
   } catch (err) {

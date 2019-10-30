@@ -1,0 +1,190 @@
+
+.btn-margin-left {
+  margin-left: 10px;
+}
+
+.center {
+  text-align: center;
+}
+
+.left{
+  text-align: left;
+}
+
+.width-40rem{
+  width: 40rem;
+}
+
+.width-25rem{
+  width: 25rem;
+}
+
+
+.text-green{
+  color: #00818a;
+}
+
+body {
+  position: relative;
+  font-family: 'Raleway', sans-serif;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #333;
+}
+
+
+h5, h6, p, h2 {
+  color: rgb(125,125,125);
+}
+
+h6 {
+   font-weight: bold;
+  /*font-style: italic;*/
+}
+
+.form-container {
+  display: inline-block;
+  width: 50%;
+  text-align: center;
+}
+
+
+.navbar .navbar-expand{
+  background: red;
+}
+
+.nav-link, .navbar-brand{
+  color: #00818a;
+}
+
+  
+footer, div {
+  padding: 0.5em;
+  vertical-align: middle
+}
+
+footer {
+  background: #f8f9fa;
+  text-align: center;
+}
+
+.signInContainer{
+  text-align: center;
+}
+
+.post {
+  background: #f8f9fa;
+  padding: 0px;
+}
+
+.btn-success{
+  background-color: #00818a !important;
+  border-color: #00818a !important;;
+}
+
+.btn-outline-success{
+  color: #00818a !important;
+  border-color: #00818a !important;
+}
+
+.btn-outline-success:hover {
+  color: white !important;
+  background: #00818a;
+}
+
+.user-greeting {
+  color: #aaa;
+  font-size: 0.8rem;
+  margin-right: 0.5rem;
+}
+
+.small-text {
+  font-size: 0.8rem;
+}
+
+.post .post-date {
+  color: #aaa;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.post-date em{
+  color: #00818a;
+}
+
+.title-container{
+ margin-left: 1rem;
+}
+
+
+.forum-link {
+  color: #00818a;
+  font-size: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+#aboutForum {
+  font-size: 0.8rem;
+}
+
+
+/*MAIN PAGE GRID */
+
+#pageHeader {
+  grid-area: header;
+  }
+#pageFooter {
+  grid-area: footer;
+  }
+#posts { 
+  grid-area: posts;      
+  }
+#top5 { 
+  grid-area: top5; 
+} 
+#forumInfo{
+  grid-area: forumInfo;
+  margin: 0px;
+}
+
+.grid-mainpage { 
+  display: grid;
+  grid-template-areas: 
+    "header header header"
+    "posts posts top5"
+    ;
+  grid-template-rows: 80px 1fr 70px;  
+  grid-template-columns: 20% 1fr 15%;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  height: 100vh;
+}  
+
+
+.grid-forum { 
+  display: grid;
+  grid-template-areas: 
+    "header header header"
+    "forumInfo forumInfo forumInfo"
+    "posts posts top5"
+    ;
+  grid-row-gap: 10px;
+  grid-column-gap: 10px;
+  height: 100vh;
+}  
+
+/* Stack the layout on small devices/viewports. */
+@media all and (max-width: 575px) {
+  body { 
+    grid-template-areas: 
+      "posts"
+      "top5"
+      "footer";
+    grid-template-rows: 80px 1fr 70px 1fr 70px;  
+    grid-template-columns: 1fr;
+ }
+}
+
+
+
+

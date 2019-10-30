@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PostSchema = new mongoose.Schema({
+  username: {
+    type: String,
+    required: true
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: 'users',
@@ -10,6 +14,10 @@ const PostSchema = new mongoose.Schema({
   forum: {
     type: Schema.Types.ObjectId,
     ref: 'forums',
+    required: true
+  },
+  forumName: {
+    type: String,
     required: true
   },
   text: {

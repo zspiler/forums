@@ -14,6 +14,11 @@ const ForumSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  followerCount: {
+    type: Number,
+    required: true,
+    default: 0
+  },
   followers: [
     {
       user: {
