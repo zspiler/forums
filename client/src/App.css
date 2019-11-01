@@ -30,6 +30,10 @@ body {
   color: #333;
 }
 
+/* .card-body {
+  background: rgb(245, 245, 245);
+} */
+
 h5,
 h6,
 p,
@@ -122,6 +126,19 @@ footer {
   margin-bottom: 0.5rem;
 }
 
+a:hover {
+  color: rgb(200, 200, 200);
+  text-decoration: none;
+}
+
+.table {
+  color: rgb(125, 125, 125);
+}
+
+#row {
+  color: rgb(170, 170, 170);
+}
+
 #aboutForum {
   font-size: 0.8rem;
 }
@@ -149,7 +166,7 @@ footer {
   display: grid;
   grid-template-areas: 'posts posts top5';
   grid-template-rows: 80px 1fr 70px;
-  grid-template-columns: 20% 1fr 15%;
+  grid-template-columns: 20% 1fr 20%;
   grid-row-gap: 10px;
   grid-column-gap: 10px;
   height: 100vh;

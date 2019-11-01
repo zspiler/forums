@@ -50,7 +50,9 @@ const Post = ({
         <div className="card post width-40rem">
           <div className="card-body">
             <h5 className="card-title">{post.title}</h5>
-            <p className="forum-link">f/{post.forumName}</p>
+            <Link to={`/f/${post.forumName}`}>
+              <span className="forum-link">f/{post.forumName}</span>
+            </Link>
             <p className="post-date">
               Posted on <Moment format="MM/DD/YYYY">{post.date}</Moment> by{' '}
               <em>{post.username}</em>

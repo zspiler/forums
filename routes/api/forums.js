@@ -33,7 +33,7 @@ router.get('/:forumId', async (req, res) => {
     const forum = await Forum.findById(req.params.forumId);
 
     if (!forum) return res.status(400).json({ msg: 'Forum not found.' });
-    res.json(forum);
+    res.json(forum[0]);
   } catch (err) {
     console.log(err.message);
     if (err.kind == 'ObjectId') {
@@ -43,17 +43,37 @@ router.get('/:forumId', async (req, res) => {
   }
 });
 
-// @route  GET api/forums
-// @desc   Get top 5 forums by follower count
+// @route  GET api/forums/f/:forumname
+// @desc   Get forum by name
 // @access Public
 
-router.get('/top/5', async (req, res) => {
+router.get('/f/:forumName', async (req, res) => {
+  try {
+    const forum = await Forum.find({ name: req.params.forumName });
+
+    if (!forum) return res.status(404).json({ msg: 'Forum not found.' });
+    res.json(forum[0]);
+  } catch (err) {
+    console.log(err.message);
+    console.log('hm');
+    if (err.kind == 'ObjectId') {
+      return res.status(404).json({ msg: 'Forum not found.' });
+    }
+    res.status(404).send('Server Error');
+  }
+});
+
+// @route  GET api/forums/top/100
+// @desc   Get top 100 forums by follower count
+// @access Public
+
+router.get('/top/100', async (req, res) => {
   try {
     const forums = await Forum.find()
       .sort({
         followerCount: -1
       })
-      .limit(5);
+      .limit(100);
 
     res.json(forums);
   } catch (err) {
@@ -80,6 +100,9 @@ router.post(
       ).isLength({
         max: 20
       }),
+      check('name', 'Forum name can not contain any spaces')
+        .not()
+        .contains(' '),
       check('description', 'Description is required')
         .not()
         .isEmpty()

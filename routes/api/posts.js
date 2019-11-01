@@ -67,7 +67,7 @@ router.post(
       });
 
       // ADD POST ID TO FORUM
-      forum.posts.unshift({ post: postId });
+      forum.posts.unshift({ post: post._id });
       await forum.save();
 
       res.json(post);
@@ -81,11 +81,30 @@ router.post(
   }
 );
 
-// @route  GET api/posts
-// @desc   Get 30 most recent posts
+// @route  GET api/posts/
+// @desc   Get all posts
 // @access Public
 
 router.get('/', async (req, res) => {
+  try {
+    const posts = await Post.find().sort({
+      date: -1
+    });
+    res.send(posts);
+  } catch (err) {
+    console.log(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'Forum not found.' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route  GET api/posts/
+// @desc   Get 30 most recent posts
+// @access Public
+
+router.get('/30', async (req, res) => {
   try {
     const posts = await Post.find()
       .sort({
@@ -102,25 +121,27 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route  GET api/posts/forum/:forumId
+// @route  GET api/posts/forum/:forumName
 // @desc   Get all posts on a forum
 // @access Public
 
-router.get('/forum/:forumId', async (req, res) => {
+router.get('/forum/:forumName', async (req, res) => {
   try {
-    const forum = await Forum.findById(req.params.forumId);
-    if (!forum) return res.status(400).json({ msg: 'Forum not found.' });
+    const forum = await Forum.find({ name: req.params.forumName });
+    if (forum.length == 0) {
+      return res.status(404).json({ msg: 'Forum not found.' });
+    }
 
-    const posts = await Post.find({ forum: req.params.forumId }).sort({
+    const posts = await Post.find({ forum: forum[0]._id }).sort({
       date: -1
     });
     res.send(posts);
   } catch (err) {
     console.log(err.message);
     if (err.kind == 'ObjectId') {
-      return res.status(400).json({ msg: 'Forum not found.' });
+      return res.status(404).json({ msg: 'Forum not found.' });
     }
-    res.status(500).send('Server Error');
+    res.status(404).send('Server Error');
   }
 });
 
@@ -165,7 +186,15 @@ router.delete('/:postId', auth, async (req, res) => {
       return res.status(401).json({ msg: 'Unauthorized' });
     }
 
+    // Delete post from "posts" database
     await Post.findOneAndRemove({ _id: req.params.postId });
+
+    // Delete post from "forums" database
+    const forum = await Forum.findById(post.forum);
+    forum.posts = forum.posts.filter(
+      postObj => postObj.post != req.params.postId
+    );
+    await forum.save();
 
     res.json({ msg: 'Post deleted' });
   } catch (err) {

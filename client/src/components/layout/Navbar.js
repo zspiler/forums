@@ -55,8 +55,8 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/list-of-forums">
-                List of Forums
+              <Link className="nav-link" to="/communities">
+                Communities
               </Link>
             </li>
             <li className="nav-item">

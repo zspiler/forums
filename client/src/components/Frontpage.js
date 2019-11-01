@@ -1,9 +1,10 @@
-import React, { Fragment, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { getPosts } from '../actions/post';
 import Post from './post/Post';
 import Spinner from './layout/Spinner';
+import Top5forums from './forum/Top5Forums';
 
 const Frontpage = ({ getPosts, post: { posts, loading } }) => {
   useEffect(() => {
@@ -22,21 +23,7 @@ const Frontpage = ({ getPosts, post: { posts, loading } }) => {
           <Post key={post._id} post={post} />
         ))}
       </section>
-
-      <div id="top5">
-        <div className="title-container">
-          <h6>Popular forums</h6>
-        </div>
-        <div className="card">
-          <div className="card-body">
-            <p>anime</p>
-            <p>sports</p>
-            <p>movies</p>
-            <p>leagueoflegends</p>
-            <p>konosuba</p>
-          </div>
-        </div>
-      </div>
+      <Top5forums />
     </div>
   );
 };
