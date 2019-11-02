@@ -11,6 +11,7 @@ import Register from './components/auth/Register';
 import Login from './components/auth/Login';
 import Alert from './components/layout/Alert';
 import Communities from './components/forum/Communities';
+import PostPage from './components/post/PostPage';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -40,6 +41,7 @@ const App = () => {
             <Route exact path="/login" component={Login} />
             <Route exact path="/communities" component={Communities} />
             <Route exact path="/f/:forumName" component={ForumPage} />
+            <Route exact path="/f/:forumName/:postId" component={PostPage} />
             <Route component={NotFound} />
           </Switch>
         </Fragment>

@@ -5,6 +5,7 @@ const initialState = {
   searchForums: [],
   forum: null,
   loading: true,
+  following: false,
   error: {}
 };
 

@@ -2,29 +2,96 @@ import React, { Fragment, useEffect } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import { getTopForums } from '../../actions/forum';
 
-const Communities = ({ getTopForums, forum: { topForums, loading } }) => {
+const Communities = ({ getTopForums, forum: { topForums, loading }, auth }) => {
   useEffect(() => {
     getTopForums();
   }, [getTopForums]);
 
+  // Scroll behavior on page refresh
+
+  window.addEventListener(
+    'scroll',
+    function() {
+      localStorage.setItem('scrollPosition', window.scrollY);
+    },
+    false
+  );
+  if (localStorage.getItem('scrollPosition') !== null) {
+    setTimeout(function() {
+      window.scrollTo(0, localStorage.getItem('scrollPosition'));
+    }, 1);
+  }
+
+  const renderFollowButton = forum => {
+    if (!auth.isAuthenticated) {
+      return (
+        <Link to="/login">
+          <div className="btn btn-outline-primary">Follow</div>
+        </Link>
+      );
+    }
+    let follows = false;
+    auth.user.forums.forEach(function(userForum) {
+      if (userForum.forum === forum._id) {
+        follows = true;
+      }
+    });
+    if (follows)
+      return (
+        <div
+          onClick={e => {
+            unfollowForum(forum);
+          }}
+          className="btn btn-outline-danger"
+        >
+          Unfollow
+        </div>
+      );
+    else {
+      return (
+        <div
+          onClick={e => {
+            followForum(forum);
+          }}
+          className="btn btn-outline-primary"
+        >
+          Follow
+        </div>
+      );
+    }
+  };
+
+  const followForum = forum => {
+    axios.put('/api/users/follow/' + forum._id, {}).then(response => {
+      window.location.reload();
+    });
+  };
+
+  const unfollowForum = forum => {
+    axios.put('/api/users/unfollow/' + forum._id, {}).then(response => {
+      window.location.reload();
+    });
+  };
+
   return (
     <Fragment>
-      <div class="center">
-        <div class="form-container">
-          <div class="row">
-            <div class="comment width-40rem">
-              <div class="card-body">
-                <h4 class="card-title text-green">List of all forums</h4>
-                <p class="card-text small-text">
+      <div className="center">
+        <div className="form-container">
+          <div className="row">
+            <div className="comment width-40rem">
+              <div className="card-body">
+                <h4 className="card-title text-green">List of all forums</h4>
+                <p className="card-text small-text">
                   If you have an idea for an online community, don't hesitate to
                   create your own forum!
                 </p>
                 <form>
                   <div>
-                    <button class="btn btn-outline-primary">
+                    <button className="btn btn-outline-primary">
                       Create Forum
                     </button>
                   </div>
@@ -37,28 +104,24 @@ const Communities = ({ getTopForums, forum: { topForums, loading } }) => {
         {!loading &&
           topForums.map(forum => {
             return (
-              <div>
+              <div key={forum._id}>
                 <p></p>
-                <div class="form-container">
-                  <div class="row">
-                    <div class="post width-40rem">
+                <div className="form-container">
+                  <div className="row">
+                    <div className="post width-40rem">
                       <div
-                        class="card-body"
+                        className="card-body"
                         style={{ background: 'rgb(248,248,248)' }}
                       >
                         <Link to={`/f/${forum.name}`}>
-                          <h6 class="card-title text-green">{forum.name}</h6>
+                          <h6 className="card-title text-green">
+                            {forum.name}
+                          </h6>
                         </Link>
-                        <p class="card-title">
+                        <p className="card-title">
                           {forum.followerCount} followers
                         </p>
-                        <form>
-                          <div>
-                            <button class="btn btn-outline-primary">
-                              Follow
-                            </button>
-                          </div>
-                        </form>
+                        <div>{renderFollowButton(forum)}</div>
                       </div>
                     </div>
                   </div>
@@ -72,12 +135,13 @@ const Communities = ({ getTopForums, forum: { topForums, loading } }) => {
 };
 
 const mapStateToProps = state => ({
-  forum: state.forum
+  forum: state.forum,
+  auth: state.auth
 });
 
 Communities.propTypes = {
   forum: PropTypes.object.isRequired,
-  getForums: PropTypes.func.isRequired
+  getTopForums: PropTypes.func.isRequired
 };
 
 export default connect(

@@ -1,14 +1,17 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
-import Moment from 'react-moment';
-import { addLike, removeLike } from '../../actions/post';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types';
+import Moment from 'react-moment';
+
+import { likePost, unlikePost } from '../../actions/post';
 
 const Post = ({
+  details,
   auth: { isAuthenticated, loading },
   post,
-  addLike,
-  removeLike
+  likePost,
+  unlikePost
 }) => {
   return (
     <div className="container">
@@ -18,13 +21,13 @@ const Post = ({
             <Fragment>
               {isAuthenticated ? (
                 <Fragment>
-                  <div onClick={e => addLike(post._id)}>
+                  <div onClick={e => likePost(post._id)}>
                     <i className="like fas fa-angle-up"></i>
                   </div>
 
                   <p>{post.likes.length}</p>
 
-                  <div onClick={e => removeLike(post._id)}>
+                  <div onClick={e => unlikePost(post._id)}>
                     <i className="like fas fa-angle-down"></i>
                   </div>
                 </Fragment>
@@ -35,7 +38,6 @@ const Post = ({
                       <i className="fas fa-angle-up"></i>
                     </div>
                   </Link>
-
                   <p>{post.likes.length}</p>
                   <Link to="/login">
                     <div>
@@ -49,10 +51,16 @@ const Post = ({
         </div>
         <div className="card post width-40rem">
           <div className="card-body">
-            <h5 className="card-title">{post.title}</h5>
-            <Link to={`/f/${post.forumName}`}>
-              <span className="forum-link">f/{post.forumName}</span>
+            <Link to={`/f/${post.forumName}/${post._id}`}>
+              <h5 className="card-title">{post.title}</h5>
             </Link>
+            {details && <p className="card-text">{post.text}</p>}
+
+            {!details && (
+              <Link to={`/f/${post.forumName}`}>
+                <span className="forum-link">f/{post.forumName}</span>
+              </Link>
+            )}
             <p className="post-date">
               Posted on <Moment format="MM/DD/YYYY">{post.date}</Moment> by{' '}
               <em>{post.username}</em>
@@ -65,11 +73,19 @@ const Post = ({
   );
 };
 
+Post.propTypes = {
+  details: PropTypes.bool.isRequired,
+  auth: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired,
+  likePost: PropTypes.func.isRequired,
+  unlikePost: PropTypes.func.isRequired
+};
+
 const mapStateToProps = state => ({
   auth: state.auth
 });
 
 export default connect(
   mapStateToProps,
-  { addLike, removeLike }
+  { likePost, unlikePost }
 )(Post);

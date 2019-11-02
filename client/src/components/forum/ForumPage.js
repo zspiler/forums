@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 import { getForum } from '../../actions/forum';
 import { getForumPosts } from '../../actions/post';
@@ -40,10 +41,41 @@ const ForumPage = ({
         follows = true;
       }
     });
-    if (follows) return <div className="btn btn-outline-danger">Unfollow</div>;
+    if (follows)
+      return (
+        <div
+          onClick={e => {
+            unfollowForum();
+          }}
+          className="btn btn-outline-danger"
+        >
+          Unfollow
+        </div>
+      );
     else {
-      return <div className="btn btn-outline-primary">Follow</div>;
+      return (
+        <div
+          onClick={e => {
+            followForum();
+          }}
+          className="btn btn-outline-primary"
+        >
+          Follow
+        </div>
+      );
     }
+  };
+
+  const followForum = () => {
+    axios.put('/api/users/follow/' + forum._id, {}).then(response => {
+      window.location.reload();
+    });
+  };
+
+  const unfollowForum = () => {
+    axios.put('/api/users/unfollow/' + forum._id, {}).then(response => {
+      window.location.reload();
+    });
   };
 
   return loading || auth.loading ? (

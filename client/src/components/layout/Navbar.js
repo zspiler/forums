@@ -1,7 +1,8 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import { logout } from '../../actions/auth';
 
 const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
@@ -73,23 +74,6 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
           {!loading && (
             <Fragment>{isAuthenticated ? authLinks : guestLinks}</Fragment>
           )}
-
-          <form>
-            {/* <button className="btn btn-outline-danger btn-margin-left">
-              Logout
-            </button> */}
-            {/* 
-            <Link to="/login">
-              <button className="btn btn-outline-success">Login</button>
-            </Link>
-
-            <Link to="/register">
-              <button className="btn btn-outline-success btn-margin-left">
-                {' '}
-                Register
-              </button>
-            </Link> */}
-          </form>
         </div>
       </nav>
     </header>

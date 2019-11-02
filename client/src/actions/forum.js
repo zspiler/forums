@@ -26,16 +26,3 @@ export const getForum = forumName => async dispatch => {
     });
   }
 };
-
-// Follow forum
-export const followForum = forumName => async dispatch => {
-  try {
-    const res = await axios.get('/api/forums/f/' + forumName);
-    dispatch({ type: GET_FORUM, payload: res.data });
-  } catch (err) {
-    dispatch({
-      type: FORUM_ERROR,
-      payload: { msg: err.response.statusText, status: err.response.status }
-    });
-  }
-};

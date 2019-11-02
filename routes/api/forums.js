@@ -31,9 +31,8 @@ router.get('/', async (req, res) => {
 router.get('/:forumId', async (req, res) => {
   try {
     const forum = await Forum.findById(req.params.forumId);
-
     if (!forum) return res.status(400).json({ msg: 'Forum not found.' });
-    res.json(forum[0]);
+    res.json(forum);
   } catch (err) {
     console.log(err.message);
     if (err.kind == 'ObjectId') {
@@ -55,7 +54,6 @@ router.get('/f/:forumName', async (req, res) => {
     res.json(forum[0]);
   } catch (err) {
     console.log(err.message);
-    console.log('hm');
     if (err.kind == 'ObjectId') {
       return res.status(404).json({ msg: 'Forum not found.' });
     }

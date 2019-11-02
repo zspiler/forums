@@ -100,11 +100,11 @@ router.get('/', async (req, res) => {
   }
 });
 
-// @route  GET api/posts/
+// @route  GET api/posts/recent/30
 // @desc   Get 30 most recent posts
 // @access Public
 
-router.get('/30', async (req, res) => {
+router.get('/recent/30', async (req, res) => {
   try {
     const posts = await Post.find()
       .sort({
@@ -149,13 +149,9 @@ router.get('/forum/:forumName', async (req, res) => {
 // @desc   Get post by ID
 // @access Public
 
-router.get('/:forumId/:postId', async (req, res) => {
+router.get('/:postId', async (req, res) => {
   try {
-    const forum = await Forum.findById(req.params.forumId);
-    if (!forum) return res.status(400).json({ msg: 'Resource not found.' });
-
     const post = await Post.findById(req.params.postId);
-
     if (!post) {
       return res.status(400).json({ msg: 'Resource not found.' });
     }
@@ -303,7 +299,6 @@ router.post(
     try {
       const user = await User.findById(req.user.id).select('-password');
       const post = await Post.findById(req.params.postId);
-      console.log(req.user.id);
 
       const newComment = {
         text: req.body.text,
@@ -396,7 +391,7 @@ router.put('/like/:postId/:commentId', auth, async (req, res) => {
     comment.likes.unshift({ user: req.user.id });
     await post.save();
 
-    res.json(post.comments);
+    res.json(comment.likes);
     return;
   } catch (err) {
     if (err.kind === 'ObjectId') {

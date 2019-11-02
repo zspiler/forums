@@ -13,13 +13,19 @@ export const LOGOUT = 'LOGOUT';
 export const ACCOUNT_DELETED = 'ACCOUNT_DELETED';
 export const CLEAR_PROFILE = 'CLEAR_PROFILE';
 
+//posts
 export const GET_POSTS = 'GET_POSTS';
+export const GET_POST = 'GET_POST';
 export const POST_ERROR = 'POST_ERROR';
 
 export const UPDATE_LIKES = 'UPDATE_LIKES';
 
+export const ADD_COMMENT = 'ADD_COMMENT';
+export const REMOVE_COMMENT = 'REMOVE_COMMENT';
+export const UPDATE_COMMENT = 'UPDATE_COMMENT';
+
+//forums
 export const GET_TOP_FORUMS = 'GET_TOP_FORUMS';
 export const FORUM_ERROR = 'FORUM_ERROR';
-
 export const GET_FORUM = 'GET_FORUM';
 export const GET_FORUM_POSTS = 'GET_FORUM_POSTS';
