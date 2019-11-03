@@ -1,17 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Fragment } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { Redirect, Link, withRouter } from 'react-router-dom';
 import axios from 'axios';
 
 import { getForum } from '../../actions/forum';
+import { deleteForum } from '../../actions/forum';
+
 import { getForumPosts } from '../../actions/post';
 import Spinner from '../layout/Spinner';
 
 import Post from '../post/Post';
 
 const ForumPage = ({
+  history,
+  deleteForum,
   match,
   getForum,
   getForumPosts,
@@ -26,6 +29,21 @@ const ForumPage = ({
   }, [getForum, getForumPosts, match.params.forumName]);
 
   if (!loading && forum === '') return <Redirect to="/NotFound" />;
+
+  const renderDeleteButton = () => {
+    if (forum.user === auth.user._id) {
+      return (
+        <div
+          onClick={e => {
+            deleteForum(forum._id, history);
+          }}
+          className="btn btn-danger btn-margin-left"
+        >
+          Delete Forum
+        </div>
+      );
+    }
+  };
 
   const renderFollowButton = () => {
     if (!auth.isAuthenticated) {
@@ -43,25 +61,41 @@ const ForumPage = ({
     });
     if (follows)
       return (
-        <div
-          onClick={e => {
-            unfollowForum();
-          }}
-          className="btn btn-outline-danger"
-        >
-          Unfollow
-        </div>
+        <Fragment>
+          <div
+            onClick={e => {
+              unfollowForum();
+            }}
+            className="btn btn-outline-danger"
+          >
+            Unfollow
+          </div>
+          <Link to={`/f/${forum.name}/posts/create`}>
+            <div className="btn btn-outline-success btn-margin-left">
+              Create Post
+            </div>
+          </Link>
+          {auth.isAuthenticated && renderDeleteButton()}
+        </Fragment>
       );
     else {
       return (
-        <div
-          onClick={e => {
-            followForum();
-          }}
-          className="btn btn-outline-primary"
-        >
-          Follow
-        </div>
+        <Fragment>
+          <div
+            onClick={e => {
+              followForum();
+            }}
+            className="btn btn-outline-primary"
+          >
+            Follow
+          </div>
+          <Link to={`/f/${forum.name}/posts/create`}>
+            <div className="btn btn-outline-success btn-margin-left">
+              Create Post
+            </div>
+          </Link>
+          {auth.isAuthenticated && renderDeleteButton()}
+        </Fragment>
       );
     }
   };
@@ -100,7 +134,7 @@ const ForumPage = ({
 
         <div className="left">
           {posts.map(post => (
-            <Post key={post._id} post={post} />
+            <Post details={false} key={post._id} post={post} />
           ))}
         </div>
       </div>
@@ -122,5 +156,5 @@ const mapStateToProps = state => ({
 
 export default connect(
   mapStateToProps,
-  { getForum, getForumPosts }
+  { getForum, getForumPosts, deleteForum }
 )(ForumPage);

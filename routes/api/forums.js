@@ -6,6 +6,7 @@ const ObjectId = require('mongodb').ObjectID;
 
 const Forum = require('../../models/Forum');
 const Post = require('../../models/Post');
+const User = require('../../models/User');
 
 // @route  GET api/forums
 // @desc   Get all forums
@@ -61,6 +62,27 @@ router.get('/f/:forumName', async (req, res) => {
   }
 });
 
+// @route  GET api/forums/owned
+// @desc   Get forums owned by user
+// @access Private
+
+router.get('/owned/:userId', auth, async (req, res) => {
+  try {
+    const forums = await Forum.find({ user: req.params.userId }).sort({
+      followerCount: -1
+    });
+    if (!forums)
+      return res.status(404).json({ msg: 'User does not own any forums.' });
+    res.json(forums);
+  } catch (err) {
+    console.log(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(404).json({ msg: 'User not found.' });
+    }
+    res.status(404).send('Server Error');
+  }
+});
+
 // @route  GET api/forums/top/100
 // @desc   Get top 100 forums by follower count
 // @access Public
@@ -103,7 +125,13 @@ router.post(
         .contains(' '),
       check('description', 'Description is required')
         .not()
-        .isEmpty()
+        .isEmpty(),
+      check(
+        'description',
+        'Description can not be more than 1000 characters long'
+      ).isLength({
+        max: 1000
+      })
     ]
   ],
   async (req, res) => {
@@ -128,7 +156,15 @@ router.post(
         user: req.user.id
       });
 
-      await forum.save();
+      let forumId;
+      await forum.save((err, forum) => {
+        forumId = forum._id;
+      });
+
+      // const user = await User.findById(req.user.id);
+      // user.owned.unshift({ forum: forum._id });
+
+      // await user.save();
       res.json(forum);
     } catch (err) {
       console.error(err.message);
@@ -153,7 +189,7 @@ router.put(
   ],
   async (req, res) => {
     try {
-      // Check if Forum with DB id exists
+      // Check if Forum with id exists
       const forum = await Forum.findById(req.params.forumId);
       if (!forum) {
         return res.status(404).json({ msg: 'Forum does not exist' });
@@ -183,7 +219,7 @@ router.put(
 
 router.delete('/:forumId', auth, async (req, res) => {
   try {
-    // Check if Forum with DB id exists
+    // Check if Forum with id exists
     const forum = await Forum.findById(req.params.forumId);
     if (!forum) {
       return res.status(404).json({ msg: 'Forum does not exist' });
@@ -193,7 +229,15 @@ router.delete('/:forumId', auth, async (req, res) => {
       return res.status(401).json({ msg: 'Unauthorized' });
     }
 
+    // Delete from Forums collection
     await Forum.findOneAndRemove({ _id: req.params.forumId });
+
+    // Delete forum's posts from Posts collection
+    await Post.deleteMany({ forum: req.params.forumId });
+
+    // const user = await User.findById(req.user.id);
+    // user.owned.filter(f => f._id !== forum._id);
+    // await user.save();
 
     res.json({ msg: 'Forum deleted' });
   } catch (err) {

@@ -168,7 +168,7 @@ router.get('/:postId', async (req, res) => {
 
 // @route  GET api/posts/:postId
 // @desc   Delete post
-// @access Public
+// @access Private
 
 router.delete('/:postId', auth, async (req, res) => {
   try {
@@ -182,10 +182,10 @@ router.delete('/:postId', auth, async (req, res) => {
       return res.status(401).json({ msg: 'Unauthorized' });
     }
 
-    // Delete post from "posts" database
+    // Delete post from Posts collection
     await Post.findOneAndRemove({ _id: req.params.postId });
 
-    // Delete post from "forums" database
+    // Delete post from Forums collection
     const forum = await Forum.findById(post.forum);
     forum.posts = forum.posts.filter(
       postObj => postObj.post != req.params.postId

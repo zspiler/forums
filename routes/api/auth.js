@@ -8,9 +8,7 @@ const config = require('config');
 const bcrypt = require('bcryptjs');
 
 // @route  GET api/auth
-// @desc   Test route
-// @access Public
-// public -> dont need auth token
+
 router.get('/', auth, async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select('-password');

@@ -1,14 +1,16 @@
 import React, { Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import Moment from 'react-moment';
 
-import { likePost, unlikePost } from '../../actions/post';
+import { likePost, unlikePost, removePost } from '../../actions/post';
 
 const Post = ({
+  history,
+  removePost,
   details,
-  auth: { isAuthenticated, loading },
+  auth: { isAuthenticated, loading, user },
   post,
   likePost,
   unlikePost
@@ -49,6 +51,7 @@ const Post = ({
             </Fragment>
           )}
         </div>
+
         <div className="card post width-40rem">
           <div className="card-body">
             <Link to={`/f/${post.forumName}/${post._id}`}>
@@ -67,6 +70,16 @@ const Post = ({
             </p>
             <p className="post-date">{post.comments.length} comments</p>
           </div>
+          {isAuthenticated && post.user === user._id && (
+            <div
+              onClick={e => {
+                removePost(post._id, history);
+              }}
+              className="btn btn-outline-danger"
+            >
+              Remove Post
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -85,7 +98,9 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(
-  mapStateToProps,
-  { likePost, unlikePost }
-)(Post);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    { likePost, unlikePost, removePost }
+  )(Post)
+);

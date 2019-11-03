@@ -37,7 +37,9 @@ const PostPage = ({
     <div className="grid-mainpage">
       <section id="posts">
         <div className="title-container">
-          <h4 className="text-green">f/sports</h4>
+          <Link to={`/f/${post.forumName}`}>
+            <h4 className="text-green">f/{post.forumName}</h4>
+          </Link>
         </div>
         <Post details={true} key={post._id} post={post} />
 

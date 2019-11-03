@@ -1,4 +1,4 @@
-import { GET_TOP_FORUMS, GET_FORUM } from '../actions/types';
+import { GET_TOP_FORUMS, GET_FORUM, GET_OWNED_FORUMS } from '../actions/types';
 
 const initialState = {
   topForums: [],
@@ -6,7 +6,8 @@ const initialState = {
   forum: null,
   loading: true,
   following: false,
-  error: {}
+  error: {},
+  ownedForums: []
 };
 
 export default function(state = initialState, action) {
@@ -24,6 +25,12 @@ export default function(state = initialState, action) {
       return {
         ...state,
         forum: payload,
+        loading: false
+      };
+    case GET_OWNED_FORUMS:
+      return {
+        ...state,
+        ownedForums: payload,
         loading: false
       };
     // case UPDATE_LIKES:

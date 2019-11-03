@@ -8,7 +8,9 @@ import {
   GET_POST,
   ADD_COMMENT,
   REMOVE_COMMENT,
-  UPDATE_COMMENT
+  UPDATE_COMMENT,
+  CREATE_POST,
+  REMOVE_POST
 } from './types';
 
 // Get posts
@@ -148,5 +150,54 @@ export const unlikeComment = (postId, commentId) => async dispatch => {
       type: POST_ERROR,
       payload: { msg: err.response.statusText, status: err.response.status }
     });
+  }
+};
+
+// Create Post
+export const createPost = (
+  formData,
+  forumId,
+  history,
+  forumName
+) => async dispatch => {
+  const config = {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  };
+  try {
+    const res = await axios.post('/api/posts/' + forumId, formData, config);
+    dispatch({ type: CREATE_POST, payload: res.data });
+    dispatch(setAlert('Post Created', 'success'));
+    history.push('/f/' + forumName);
+  } catch (err) {
+    const errors = err.response.data.errors;
+    if (errors) {
+      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+    }
+
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
+// Remove post
+export const removePost = (postId, history) => async dispatch => {
+  if (window.confirm('Are you sure you want to remove this post?')) {
+    try {
+      await axios.delete('/api/posts/' + postId);
+
+      dispatch({ type: REMOVE_POST, payload: postId });
+      dispatch(setAlert('Post Removed', 'success'));
+      history.push('/');
+    } catch (err) {
+      console.log(err);
+      dispatch({
+        type: POST_ERROR,
+        payload: { msg: err.response.statusText, status: err.response.status }
+      });
+    }
   }
 };

@@ -12,6 +12,9 @@ import Login from './components/auth/Login';
 import Alert from './components/layout/Alert';
 import Communities from './components/forum/Communities';
 import PostPage from './components/post/PostPage';
+import CreatePost from './components/post/CreatePost';
+import CreateForum from './components/forum/CreateForum';
+import MyForums from './components/forum/MyForums';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -42,6 +45,13 @@ const App = () => {
             <Route exact path="/communities" component={Communities} />
             <Route exact path="/f/:forumName" component={ForumPage} />
             <Route exact path="/f/:forumName/:postId" component={PostPage} />
+            <Route
+              exact
+              path="/f/:forumName/posts/create"
+              component={CreatePost}
+            />
+            <Route exact path="/create-forum" component={CreateForum} />
+            <Route exact path="/my-forums" component={MyForums} />
             <Route component={NotFound} />
           </Switch>
         </Fragment>

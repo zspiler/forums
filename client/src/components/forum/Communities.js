@@ -8,11 +8,11 @@ import { getTopForums } from '../../actions/forum';
 
 const Communities = ({ getTopForums, forum: { topForums, loading }, auth }) => {
   useEffect(() => {
+    window.scroll(0, 0);
     getTopForums();
   }, [getTopForums]);
 
   // Scroll behavior on page refresh
-
   window.addEventListener(
     'scroll',
     function() {
@@ -24,6 +24,8 @@ const Communities = ({ getTopForums, forum: { topForums, loading }, auth }) => {
     setTimeout(function() {
       window.scrollTo(0, localStorage.getItem('scrollPosition'));
     }, 1);
+  } else {
+    window.scrollTo(0, 0);
   }
 
   const renderFollowButton = forum => {
@@ -91,9 +93,11 @@ const Communities = ({ getTopForums, forum: { topForums, loading }, auth }) => {
                 </p>
                 <form>
                   <div>
-                    <button className="btn btn-outline-primary">
-                      Create Forum
-                    </button>
+                    <Link to="create-forum">
+                      <div className="btn btn-outline-primary">
+                        Create Forum
+                      </div>
+                    </Link>
                   </div>
                 </form>
               </div>

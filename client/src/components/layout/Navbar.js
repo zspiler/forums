@@ -33,7 +33,9 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
 
   return (
     <header id="pageHeader">
-      <nav className="navbar navbar-expand">
+      <nav className="navbar navbar-expand-md">
+        {/* <nav className="navbar navbar-expand"> */}
+
         <Link className="navbar-brand" to="/">
           Forums
         </Link>
@@ -46,7 +48,7 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
           aria-expanded="false"
           aria-label="Toggle navigation"
         >
-          <span className="navbar-toggler-icon"></span>
+          <span className="navbafr-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav mr-auto">
@@ -65,6 +67,13 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
                 Create Forum
               </Link>
             </li>
+            {user && isAuthenticated && (
+              <li className="nav-item">
+                <Link className="nav-link" to="/my-forums">
+                  My Forums
+                </Link>
+              </li>
+            )}
           </ul>
 
           {user && isAuthenticated && (
