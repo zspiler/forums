@@ -1,6 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import { connect } from 'react-redux';
-import { Link, Redirect, withRouter } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 
 import PropTypes from 'prop-types';
 
@@ -67,13 +67,12 @@ const CreateForum = ({ history, isAuthenticated, createForum }) => {
   );
 };
 
-CreateForum.propTypes = {};
+CreateForum.propTypes = {
+  isAuthenticated: PropTypes.bool.isRequired
+};
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated
 });
 
-export default connect(
-  mapStateToProps,
-  { createForum }
-)(CreateForum);
+export default connect(mapStateToProps, { createForum })(CreateForum);

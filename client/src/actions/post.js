@@ -39,6 +39,19 @@ export const getForumPosts = forumName => async dispatch => {
   }
 };
 
+// Get forum's posts
+export const getFollowingPosts = forumName => async dispatch => {
+  try {
+    const res = await axios.get('/api/posts/user/following');
+    dispatch({ type: GET_POSTS, payload: res.data });
+  } catch (err) {
+    dispatch({
+      type: POST_ERROR,
+      payload: { msg: err.response.statusText, status: err.response.status }
+    });
+  }
+};
+
 // Get single post
 export const getPost = postId => async dispatch => {
   try {

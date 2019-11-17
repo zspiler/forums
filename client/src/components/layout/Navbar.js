@@ -58,6 +58,11 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
               </Link>
             </li>
             <li className="nav-item">
+              <Link className="nav-link" to="/following">
+                Following
+              </Link>
+            </li>
+            <li className="nav-item">
               <Link className="nav-link" to="/communities">
                 Communities
               </Link>
@@ -98,7 +103,4 @@ const mapStateToProps = state => ({
   auth: state.auth
 });
 
-export default connect(
-  mapStateToProps,
-  { logout }
-)(Navbar);
+export default connect(mapStateToProps, { logout })(Navbar);

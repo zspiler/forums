@@ -451,34 +451,57 @@ router.put('/unlike/:postId/:commentId', auth, async (req, res) => {
   }
 });
 
-// // @route  GET api/posts/followed
-// // @desc   Get all posts from followed forums
-// // @access Private
+// @route  GET api/posts/following
+// @desc   Get 5 latest posts from forums that user follows
+// @access Private
 
-// TODO: CAN'T HAVE AWAIT IN MAP
+router.get('/user/following', auth, async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
 
-// router.get('/followed', auth, async (req, res) => {
-//   try {
-//     const user = await User.findById(req.user.id);
-//     const posts = []
+    let promises = user.forums.map(async userForum => {
+      try {
+        return await Forum.findById(userForum.forum);
+      } catch (error) {
+        console.log(error);
+      }
+    });
 
-//     user.forums.map(userForum => {
-//       const forum = await Forum.findById(req.params.forumId);
-//       if (!forum) return res.status(400).json({ msg: 'Forum not found.' });
-//       const forumPosts = await Post.find({ forum: userForum }).sort({
-//             date: -1
-//       });
-//       posts.concat(forumPosts);
-//     });
-//     return res.send(posts);
+    const forums = await Promise.all(promises);
 
-//   } catch (err) {
-//     console.log(err.message);
-//     if (err.kind == 'ObjectId') {
-//       return res.status(400).json({ msg: 'Forum not found.' });
-//     }
-//     res.status(500).send('Server Error');
-//   }
-// });
+    promises = forums.map(async forum => {
+      try {
+        if (forum) {
+          return await Post.find({ forum: forum._id })
+            .sort({
+              date: -1
+            })
+            .limit(5);
+        } else {
+          return [];
+        }
+      } catch (error) {
+        console.error(error);
+        return res.status(500).send('Server Error');
+      }
+    });
+    const posts = await Promise.all(promises); // array of arrays of posts
+
+    const postList = [];
+    posts.forEach(forum => {
+      forum.forEach(post => {
+        postList.push(post);
+      });
+    });
+
+    return res.send(postList);
+  } catch (err) {
+    console.log(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'Forum not found.' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
 
 module.exports = router;

@@ -56,7 +56,7 @@ export const createForum = (formData, history) => async dispatch => {
     }
   };
   try {
-    const res = await axios.post('/api/forums', formData);
+    const res = await axios.post('/api/forums', formData, config); //added config
     dispatch({ type: CREATE_FORUM, payload: res.data });
     dispatch(setAlert('Forum Created', 'success'));
     history.push('/f/' + formData.name);

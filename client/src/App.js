@@ -22,6 +22,7 @@ import './App.css';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
 import NotFound from './components/NotFound';
+import Following from './components/forum/Following';
 
 if (localStorage.token) {
   setAuthToken(localStorage.token);
@@ -52,6 +53,7 @@ const App = () => {
             />
             <Route exact path="/create-forum" component={CreateForum} />
             <Route exact path="/my-forums" component={MyForums} />
+            <Route exact path="/following" component={Following} />
             <Route component={NotFound} />
           </Switch>
         </Fragment>
