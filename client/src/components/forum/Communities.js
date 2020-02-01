@@ -148,7 +148,4 @@ Communities.propTypes = {
   getTopForums: PropTypes.func.isRequired
 };
 
-export default connect(
-  mapStateToProps,
-  { getTopForums }
-)(Communities);
+export default connect(mapStateToProps, { getTopForums })(Communities);

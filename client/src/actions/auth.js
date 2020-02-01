@@ -6,8 +6,7 @@ import {
   AUTH_ERROR,
   LOGIN_SUCCESS,
   LOGIN_FAIL,
-  LOGOUT,
-  CLEAR_PROFILE
+  LOGOUT
 } from './types';
 import { setAlert } from './alert'; //dont need CONNECT because we arent using state ;)
 import setAuthToken from '../utils/setAuthToken';
@@ -77,22 +76,20 @@ export const login = (email, password) => async dispatch => {
       type: LOGIN_SUCCESS,
       payload: res.data //TOKEN
     });
-
     dispatch(loadUser());
   } catch (err) {
-    const errors = err.response.data.errors;
+    const errors = err.response;
     if (errors) {
-      errors.forEach(error => dispatch(setAlert(error.msg, 'danger')));
+      dispatch(setAlert('Invalid Credentials', 'danger'));
+      dispatch({
+        type: LOGIN_FAIL
+      });
     }
-    dispatch({
-      type: LOGIN_FAIL
-    });
   }
 };
 
-// Logout / Clear Profile
+// Logout
 
 export const logout = () => dispatch => {
-  dispatch({ type: CLEAR_PROFILE });
   dispatch({ type: LOGOUT });
 };

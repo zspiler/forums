@@ -33,14 +33,6 @@ export default function(state = initialState, action) {
         ownedForums: payload,
         loading: false
       };
-    // case UPDATE_LIKES:
-    //   return {
-    //     ...state,
-    //     posts: state.posts.map(post =>
-    //       post._id === payload.postId ? { ...post, likes: payload.likes } : post
-    //     ),
-    //     loading: false
-    //   };
 
     default:
       return state;

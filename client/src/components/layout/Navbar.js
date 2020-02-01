@@ -34,8 +34,6 @@ const Navbar = ({ auth: { isAuthenticated, loading, user }, logout }) => {
   return (
     <header id="pageHeader">
       <nav className="navbar navbar-expand-md">
-        {/* <nav className="navbar navbar-expand"> */}
-
         <Link className="navbar-brand" to="/">
           Forums
         </Link>

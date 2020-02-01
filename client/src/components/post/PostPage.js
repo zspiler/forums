@@ -88,56 +88,57 @@ const PostPage = ({
           <h6>Comments:</h6>
         </div>
 
-        {post.comments.map(comment => (
-          <div className="container" key={comment._id}>
-            <div className="row">
-              <div className="center">
-                {isAuthenticated ? (
-                  <Fragment>
-                    <div onClick={e => likeComment(post._id, comment._id)}>
-                      <i className="like fas fa-angle-up"></i>
-                    </div>
-                    <p>{comment.likes.length}</p>
-                    <div onClick={e => unlikeComment(post._id, comment._id)}>
-                      <i className="like fas fa-angle-down"></i>
-                    </div>
-                  </Fragment>
-                ) : (
-                  <Fragment>
-                    <Link to="/login">
-                      <i className="like fas fa-angle-up"></i>
-                    </Link>
-                    <p>{comment.likes.length}</p>
-                    <Link to="/login">
-                      <i className="like fas fa-angle-down"></i>
-                    </Link>
-                  </Fragment>
+        {post.comments &&
+          post.comments.map(comment => (
+            <div className="container" key={comment._id}>
+              <div className="row">
+                <div className="center">
+                  {isAuthenticated ? (
+                    <Fragment>
+                      <div onClick={e => likeComment(post._id, comment._id)}>
+                        <i className="like fas fa-angle-up"></i>
+                      </div>
+                      <p>{comment.likes.length}</p>
+                      <div onClick={e => unlikeComment(post._id, comment._id)}>
+                        <i className="like fas fa-angle-down"></i>
+                      </div>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <Link to="/login">
+                        <i className="like fas fa-angle-up"></i>
+                      </Link>
+                      <p>{comment.likes.length}</p>
+                      <Link to="/login">
+                        <i className="like fas fa-angle-down"></i>
+                      </Link>
+                    </Fragment>
+                  )}
+                </div>
+
+                <div className="post width-40rem">
+                  <div className="card-body">
+                    <p className="small-text">{comment.text}</p>
+                    <p className="post-date">
+                      <Moment format="MM/DD/YYYY HH:mm">{comment.date}</Moment>{' '}
+                      <em>{comment.name}</em>
+                    </p>
+                  </div>
+                </div>
+                {isAuthenticated && comment.user === user._id && (
+                  <div
+                    onClick={e => {
+                      removeComment(post._id, comment._id);
+                      window.scroll(0, 0);
+                    }}
+                    className="btn btn-danger"
+                  >
+                    Remove
+                  </div>
                 )}
               </div>
-
-              <div className="post width-40rem">
-                <div className="card-body">
-                  <p className="small-text">{comment.text}</p>
-                  <p className="post-date">
-                    <Moment format="MM/DD/YYYY HH:mm">{comment.date}</Moment>{' '}
-                    <em>{comment.name}</em>
-                  </p>
-                </div>
-              </div>
-              {isAuthenticated && comment.user === user._id && (
-                <div
-                  onClick={e => {
-                    removeComment(post._id, comment._id);
-                    window.scroll(0, 0);
-                  }}
-                  className="btn btn-danger"
-                >
-                  Remove
-                </div>
-              )}
             </div>
-          </div>
-        ))}
+          ))}
       </section>
       <Top5forums />
     </div>
@@ -159,7 +160,10 @@ const mapStateToProps = state => ({
   post: state.post
 });
 
-export default connect(
-  mapStateToProps,
-  { getPost, addComment, removeComment, likeComment, unlikeComment }
-)(PostPage);
+export default connect(mapStateToProps, {
+  getPost,
+  addComment,
+  removeComment,
+  likeComment,
+  unlikeComment
+})(PostPage);

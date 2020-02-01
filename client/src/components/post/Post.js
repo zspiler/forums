@@ -16,73 +16,72 @@ const Post = ({
   unlikePost
 }) => {
   return (
-    <div className="container">
-      <div className="row">
-        <div className="center">
-          {!loading && (
-            <Fragment>
-              {isAuthenticated ? (
-                <Fragment>
-                  <div onClick={e => likePost(post._id)}>
-                    <i className="like fas fa-angle-up"></i>
-                  </div>
-
-                  <p>{post.likes.length}</p>
-
-                  <div onClick={e => unlikePost(post._id)}>
-                    <i className="like fas fa-angle-down"></i>
-                  </div>
-                </Fragment>
-              ) : (
-                <Fragment>
-                  <Link to="/login">
-                    <div>
-                      <i className="fas fa-angle-up"></i>
+    post && (
+      <div className="container">
+        <div className="row">
+          <div className="center">
+            {!loading && (
+              <Fragment>
+                {isAuthenticated ? (
+                  <Fragment>
+                    <div onClick={e => likePost(post._id)}>
+                      <i className="like fas fa-angle-up"></i>
                     </div>
-                  </Link>
-                  <p>{post.likes.length}</p>
-                  <Link to="/login">
-                    <div>
-                      <i className="fas fa-angle-down"></i>
+                    <p>{post.likes.length}</p>
+                    <div onClick={e => unlikePost(post._id)}>
+                      <i className="like fas fa-angle-down"></i>
                     </div>
-                  </Link>
-                </Fragment>
-              )}
-            </Fragment>
-          )}
-        </div>
-
-        <div className="card post width-40rem">
-          <div className="card-body">
-            <Link to={`/f/${post.forumName}/${post._id}`}>
-              <h5 className="card-title">{post.title}</h5>
-            </Link>
-            {details && <p className="card-text">{post.text}</p>}
-
-            {!details && (
-              <Link to={`/f/${post.forumName}`}>
-                <span className="forum-link">f/{post.forumName}</span>
-              </Link>
+                  </Fragment>
+                ) : (
+                  <Fragment>
+                    <Link to="/login">
+                      <div>
+                        <i className="fas fa-angle-up"></i>
+                      </div>
+                    </Link>
+                    <p>{post.likes.length}</p>
+                    <Link to="/login">
+                      <div>
+                        <i className="fas fa-angle-down"></i>
+                      </div>
+                    </Link>
+                  </Fragment>
+                )}
+              </Fragment>
             )}
-            <p className="post-date">
-              Posted on <Moment format="MM/DD/YYYY">{post.date}</Moment> by{' '}
-              <em>{post.username}</em>
-            </p>
-            <p className="post-date">{post.comments.length} comments</p>
           </div>
-          {isAuthenticated && post.user === user._id && (
-            <div
-              onClick={e => {
-                removePost(post._id, history);
-              }}
-              className="btn btn-outline-danger"
-            >
-              Remove Post
+
+          <div className="card post width-40rem">
+            <div className="card-body">
+              <Link to={`/f/${post.forumName}/${post._id}`}>
+                <h5 className="card-title">{post.title}</h5>
+              </Link>
+              {details && <p className="card-text">{post.text}</p>}
+              {!details && (
+                <Link to={`/f/${post.forumName}`}>
+                  <span className="forum-link">f/{post.forumName}</span>
+                </Link>
+              )}
+              <p className="post-date">
+                Posted on <Moment format="MM/DD/YYYY">{post.date}</Moment> by{' '}
+                <em>{post.username}</em>
+              </p>
+              <p className="post-date">{post.comments.length} comments</p>
             </div>
-          )}
+            {user && post.user === user._id && (
+              <div
+                onClick={e => {
+                  removePost(post._id, history);
+                }}
+                className="btn btn-outline-danger"
+              >
+                Remove Post
+              </div>
+            )}
+          </div>
         </div>
       </div>
-    </div>
+    )
   );
 };
 
@@ -99,8 +98,5 @@ const mapStateToProps = state => ({
 });
 
 export default withRouter(
-  connect(
-    mapStateToProps,
-    { likePost, unlikePost, removePost }
-  )(Post)
+  connect(mapStateToProps, { likePost, unlikePost, removePost })(Post)
 );

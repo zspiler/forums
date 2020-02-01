@@ -6,10 +6,12 @@ import { getPosts } from '../actions/post';
 import Post from './post/Post';
 import Spinner from './layout/Spinner';
 import Top5forums from './forum/Top5Forums';
+import { loadUser } from '../actions/auth';
 
-const Frontpage = ({ getPosts, post: { posts, loading } }) => {
+const Frontpage = ({ getPosts, post: { posts, loading }, auth: { user } }) => {
   useEffect(() => {
     getPosts();
+    loadUser();
   }, [getPosts]);
 
   return loading || posts === null ? (
@@ -39,7 +41,4 @@ const mapStateToProps = state => ({
   post: state.post
 });
 
-export default connect(
-  mapStateToProps,
-  { getPosts }
-)(Frontpage);
+export default connect(mapStateToProps, { getPosts })(Frontpage);

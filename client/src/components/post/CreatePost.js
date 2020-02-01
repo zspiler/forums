@@ -83,7 +83,4 @@ const mapStateToProps = state => ({
   forum: state.forum
 });
 
-export default connect(
-  mapStateToProps,
-  { createPost }
-)(CreatePost);
+export default connect(mapStateToProps, { createPost })(CreatePost);

@@ -217,7 +217,6 @@ router.put('/like/:postId', auth, async (req, res) => {
     if (
       post.likes.filter(like => like.user.toString() === req.user.id).length > 0
     ) {
-      // return res.status(400).json({ msg: 'Post already liked' });
       return res.status(400).send({ msg: 'Post already liked' });
     }
 
@@ -325,22 +324,18 @@ router.post(
 router.delete('/comment/:postId/:commentId', auth, async (req, res) => {
   try {
     const post = await Post.findById(req.params.postId);
-
     // Pull out comment
     const comment = post.comments.find(
       comment => comment.id === req.params.commentId
     );
-
     // Make sure comment exists
     if (!comment) {
       return res.status(404).json({ msg: 'Comment does not exist' });
     }
-
     // Check user
     if (comment.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'User not authorized' });
     }
-
     // Get remove index
     const removeIndex = post.comments
       .map(comment => comment.user.toString())
@@ -485,7 +480,7 @@ router.get('/user/following', auth, async (req, res) => {
         return res.status(500).send('Server Error');
       }
     });
-    const posts = await Promise.all(promises); // array of arrays of posts
+    const posts = await Promise.all(promises);
 
     const postList = [];
     posts.forEach(forum => {

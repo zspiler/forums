@@ -32,7 +32,6 @@ const Top5forums = ({ getTopForums, forum: { topForums, loading } }) => {
                     <th scope="row" id="row">
                       {++index}
                     </th>
-
                     <td>
                       <Link to={`/f/${forum.name}`}>{forum.name}</Link>
                     </td>
@@ -57,7 +56,4 @@ Top5forums.propTypes = {
   getTopForums: PropTypes.func.isRequired
 };
 
-export default connect(
-  mapStateToProps,
-  { getTopForums }
-)(Top5forums);
+export default connect(mapStateToProps, { getTopForums })(Top5forums);

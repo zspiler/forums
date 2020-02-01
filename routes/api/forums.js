@@ -17,7 +17,6 @@ router.get('/', async (req, res) => {
     const forums = await Forum.find().sort({
       followerCount: -1
     });
-
     res.json(forums);
   } catch (err) {
     console.log(err.message);
@@ -94,7 +93,6 @@ router.get('/top/100', async (req, res) => {
         followerCount: -1
       })
       .limit(100);
-
     res.json(forums);
   } catch (err) {
     console.log(err.message);
@@ -161,10 +159,6 @@ router.post(
         forumId = forum._id;
       });
 
-      // const user = await User.findById(req.user.id);
-      // user.owned.unshift({ forum: forum._id });
-
-      // await user.save();
       res.json(forum);
     } catch (err) {
       console.error(err.message);
@@ -228,17 +222,10 @@ router.delete('/:forumId', auth, async (req, res) => {
     if (forum.user.toString() !== req.user.id) {
       return res.status(401).json({ msg: 'Unauthorized' });
     }
-
     // Delete from Forums collection
     await Forum.findOneAndRemove({ _id: req.params.forumId });
-
     // Delete forum's posts from Posts collection
     await Post.deleteMany({ forum: req.params.forumId });
-
-    // const user = await User.findById(req.user.id);
-    // user.owned.filter(f => f._id !== forum._id);
-    // await user.save();
-
     res.json({ msg: 'Forum deleted' });
   } catch (err) {
     if (err.kind == 'ObjectId') {
